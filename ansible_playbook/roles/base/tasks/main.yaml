@@ -1,0 +1,44 @@
+- name: Create target dir
+  file:
+    path: "{{ target_dir }}"
+    state: directory
+
+- name: Create systems dir
+  file:
+    path: "{{ target_dir }}/systems"
+    state: directory
+
+- name: Create datasets dir
+  file:
+    path: "{{ target_dir }}/datasets"
+    state: directory
+
+- name: Create logs dir
+  file:
+    path: "{{ target_dir }}/logs"
+    state: directory
+
+- name: Create load logs dir
+  file:
+    path: "{{ target_dir }}/logs/load"
+    state: directory
+
+- name: Create run logs dir
+  file:
+    path: "{{ target_dir }}/logs/run"
+    state: directory
+
+- name: Create databases dir
+  file:
+    path: "{{ target_dir }}/databases"
+    state: directory
+
+- name: Create Iguana results dir
+  file:
+    path: "{{ target_dir }}/iguana_results"
+    state: directory
+
+- name: Create Iguana results dir (SPARQL)
+  file:
+    path: "{{ target_dir }}/iguana_results/sparql"
+    state: directory

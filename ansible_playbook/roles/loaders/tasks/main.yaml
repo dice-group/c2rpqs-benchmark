@@ -1,0 +1,37 @@
+- name: Install curl (to communicate with http endpoints)
+  become: yes
+  apt:
+    package: curl
+
+- name: Create loader directory
+  file:
+    path: "{{ target_dir }}/loaders"
+    state: directory
+
+- name: Template copy loader scripts
+  template:
+    src: "{{ item[0] }}-load.sh"
+    dest: "{{ target_dir }}/loaders/{{ item[0] }}-load-{{ item[1].name }}.sh"
+    mode: 0755
+  loop: "{{ systems | product(datasets) | list }}"
+
+- name: Template copy virtuoso configurations
+  template:
+    src: virtuoso-load.ini
+    dest: "{{ target_dir }}/systems/virtuoso/virtuoso-load-{{ item.name }}.ini"
+  loop: "{{ datasets }}"
+  when: "'virtuoso' in systems"
+
+- name: Template copy GraphDB configurations
+  template:
+    src: graphdb.ttl
+    dest: "{{ target_dir }}/systems/graphdb/graphdb-{{ item.name }}.ttl"
+  loop: "{{ datasets }}"
+  when: "'graphdb' in systems"
+
+- name: Template copy tentris loader scripts
+  template:
+    src: "tentris-load.sh"
+    dest: "{{ target_dir }}/loaders/tentris-{{ item[0] }}-load-{{ item[1].name }}.sh"
+    mode: 0755
+  loop: "{{ tentris_versions[:1] | product(datasets) | list }}"

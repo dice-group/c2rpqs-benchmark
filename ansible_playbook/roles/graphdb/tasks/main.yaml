@@ -1,0 +1,7 @@
+- name: Check for GraphDB
+  stat:
+    path: "{{ target_dir }}/systems/graphdb/graphdb-{{ graphdb_version }}/"
+  register: graphdb_dir
+
+- include: install.yaml
+  when: not graphdb_dir.stat.exists

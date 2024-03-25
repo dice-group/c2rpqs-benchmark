@@ -1,0 +1,6 @@
+tentris_versions:
+  - paths-full-rf           # all included (reduction factor)
+  - paths-rpq-prio-no-cache # rpq prio, no caching
+  - paths-rpq-prio-cache    # rpq prio, with caching
+  - paths-join-prio         # join prio
+  - paths-full-min-card     # all included (min cardinality)

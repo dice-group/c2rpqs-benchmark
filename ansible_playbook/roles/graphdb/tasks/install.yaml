@@ -1,0 +1,26 @@
+- name: Create a temporary download directory
+  tempfile:
+    state: directory
+    suffix: tmp-graphdb
+  register: tempdir
+
+- name: Ensure GraphDB Directory is present
+  file:
+    path: "{{ target_dir }}/systems/graphdb"
+    state: directory
+
+- name: Copy graphdb
+  copy: 
+    src: graphdb-{{ graphdb_version }}-dist.zip
+    dest: "{{ tempdir.path }}"
+
+- name: Unzip GraphDB
+  unarchive:
+    remote_src: yes
+    src: "{{ tempdir.path }}/graphdb-{{ graphdb_version }}-dist.zip"
+    dest: "{{ target_dir }}/systems/graphdb/"
+
+- name: Delete tempdir
+  file:
+    path: "{{ tempdir.path }}"
+    state: absent

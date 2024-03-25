@@ -1,0 +1,4 @@
+virtuoso_version: 7.2.10
+virt_mem: "{{ (system_memory|int * 0.66)|int }}"
+virt_number_of_buffers: "{{ system_memory|int * 215625 // 4194304 }}"
+virt_max_dirty_buffers: "{{ system_memory|int * 15625 // 262144 }}"

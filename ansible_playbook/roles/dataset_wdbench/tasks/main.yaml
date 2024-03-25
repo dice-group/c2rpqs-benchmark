@@ -1,0 +1,29 @@
+- name: Check for the WDBench directory
+  stat:
+    path: "{{ target_dir }}/datasets/wdbench"
+  register: dataset_dir
+
+- block:
+  - name: Create dataset directory 
+    file:
+      path: "{{ target_dir }}/datasets/wdbench/"
+      state: directory
+
+  - name: Download the dataset
+    get_url:
+      url: "https://figshare.com/ndownloader/files/34816081?private_link=50b7544ad6b1f51de060"
+      dest: "{{ target_dir }}/datasets/wdbench/wdbench.nt.bz2"
+
+  - name: Decompress WDBench dataset
+    command:
+      argv:
+        - bzip2
+        - -d
+        - "{{ target_dir }}/datasets/wdbench/wdbench.nt.bz2"
+
+  - name: Copy c2rpqs-final
+    copy: 
+      src: "c2rpqs-final.txt"
+      dest: "{{ target_dir }}/datasets/wdbench/c2rpqs-final.txt"
+
+  when: not dataset_dir.stat.exists

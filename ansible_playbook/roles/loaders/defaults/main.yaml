@@ -1,0 +1,14 @@
+datasets:
+  - name: wdbench
+    path: "{{ target_dir }}/datasets/wdbench/wdbench.nt"
+    queries_path: "{{ target_dir }}/datasets/wdbench/"
+    max_ram: "{{ system_memory }}"
+
+systems:
+  - fuseki
+  - virtuoso
+  - graphdb
+  - milleniumdb
+  - blazegraph
+
+load_max_ram: "{{ system_memory }}"

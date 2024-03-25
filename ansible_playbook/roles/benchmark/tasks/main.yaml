@@ -1,0 +1,17 @@
+- name: Copy run-loaders script
+  template:
+    src: run-loaders.sh
+    dest: "{{ target_dir }}"
+    mode: 0755
+
+- name: Copy run-sparql script
+  template:
+    src: run-sparql.sh
+    dest: "{{ target_dir }}"
+    mode: 0755
+
+- name: Copy run-sparql-tentris script
+  template:
+    src: run-sparql-tentris.sh
+    dest: "{{ target_dir }}"
+    mode: 0755

@@ -1,0 +1,66 @@
+- name: Create Iguana suite directory
+  file:
+    path: "{{ target_dir }}/iguana_suites/"
+    state: directory
+
+- name: Create HTTP suite directories
+  file:
+    path: "{{ target_dir }}/iguana_suites/http/{{ item[0].name }}/{{ item[1].name }}"
+    state: directory
+  loop: "{{ systems_http | product(datasets) | list }}"
+
+- name: Create HTTP suite directories for tentris
+  file:
+    path: "{{ target_dir }}/iguana_suites/http/tentris-{{ item[0] }}/{{ item[1].name }}"
+    state: directory
+  loop: "{{ tentris_versions | product(datasets) | list }}"
+
+- name: Template copy start scripts
+  template:
+    src: "{{ item[0].name }}-start.sh"
+    dest: "{{ target_dir }}/iguana_suites/http/{{ item[0].name }}/{{ item[1].name }}/{{ item[2].number }}-start.sh"
+    mode: 0755
+  loop: "{{ systems_http | product(datasets, iguana_http_connections) | list }}"
+
+- name: Template copy stop scripts
+  template:
+    src: "{{ item.name }}-stop.sh"
+    dest: "{{ target_dir }}/iguana_suites/http/{{ item.name }}/stop.sh"
+    mode: 0755
+  loop: "{{ systems_http }}"
+
+- name: Template copy virtuoso config
+  template:
+    src: virtuoso-run.ini
+    dest: "{{ target_dir }}/systems/virtuoso/virtuoso-run-{{ item[0].name }}-{{ item[1].number }}.ini"
+  loop: "{{ datasets | product(iguana_http_connections) | list }}"
+
+- name: Template copy tentris start scripts
+  template:
+    src: tentris-start.sh
+    dest: "{{ target_dir }}/iguana_suites/http/tentris-{{ item[0] }}/{{ item[1].name }}/{{ item[2].number }}-start.sh"
+    mode: 0755
+  loop: "{{ tentris_versions | product(datasets, iguana_http_connections) | list }}"
+
+- name: Template copy tentris stop scripts
+  template:
+    src: tentris-stop.sh
+    dest: "{{ target_dir }}/iguana_suites/http/tentris-{{ item }}/stop.sh"
+    mode: 0755
+  loop: "{{ tentris_versions }}"
+
+- name: Template copy Iguana HTTP suites with query mixes limit for wdbench-c2rpqs-final
+  template:
+    src: httpQM.suite
+    dest: "{{ target_dir }}/iguana_suites/http/{{ item[0].name }}/{{ item[1].name }}/{{ item[2].number }}-{{ queries_name }}-QM.yml"
+  loop: "{{ systems_http | product(datasets[:1], iguana_http_connections) | list }}" # wdbench
+  vars:
+    - queries_name: "c2rpqs-final"
+
+- name: Template copy Tentris Iguana HTTP suites with query mixes limit for wdbench-c2rpqs-final
+  template:
+    src: tentris-httpQM.suite
+    dest: "{{ target_dir }}/iguana_suites/http/tentris-{{ item[0] }}/{{ item[1].name }}/{{ item[2].number }}-{{ queries_name }}-QM.yml"
+  loop: "{{ tentris_versions | product(datasets[:1], iguana_http_connections) | list }}" # wdbench
+  vars:
+    - queries_name: "c2rpqs-final"

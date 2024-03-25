@@ -1,0 +1,57 @@
+- name: Check for Iguana
+  stat:
+    path: "{{ target_dir }}/iguana-{{ iguana_version }}"
+  register: iguana_dir
+
+- block:
+  - name: Create Iguana directory
+    file:
+      path: "{{ target_dir }}/iguana-{{ iguana_version }}"
+      state: directory
+
+  - name: Create a tempory download directory
+    tempfile:
+      state: directory
+      suffix: iguana
+    register: tempdir
+
+  - name: Download Iguana
+    get_url:
+      url: https://github.com/dice-group/IGUANA/releases/download/v{{ iguana_version }}/iguana-{{ iguana_version }}.zip
+      dest: "{{ tempdir.path }}/iguana-{{ iguana_version }}.zip"
+
+  - name: Unzip Iguana
+    unarchive:
+      src: "{{ tempdir.path }}/iguana-{{ iguana_version }}.zip"
+      remote_src: yes
+      dest: "{{ tempdir.path }}/"
+
+  - name: Find Iguana jar
+    find:
+      path: "{{ tempdir.path }}/iguana"
+      recurse: yes
+      pattern: iguana-{{ iguana_version }}.jar
+    register: find_jar
+
+  - name: Create Iguana Directory
+    file:
+      path: "{{ target_dir }}/iguana-{{ iguana_version }}"
+      state: directory
+
+  - name: Copy Iguana jar
+    copy:
+      src: "{{ find_jar.files[0].path }}"
+      remote_src: yes
+      dest: "{{ target_dir }}/iguana-{{ iguana_version }}/corecontroller.jar"
+
+  - name: Template copy iguana run script
+    template:
+      src: iguana-run.sh
+      dest: "{{ target_dir }}/iguana-run.sh"
+      mode: 0755
+
+  - name: Delete tempdir
+    file:
+      path: "{{ tempdir.path }}"
+      state: absent
+  when: not iguana_dir.stat.exists

@@ -1,0 +1,14 @@
+dependencies:
+  - role: base
+  - role: build_common
+  - role: dataset_wdbench
+  - role: tentris
+  - role: blazegraph
+  - role: milleniumdb
+  - role: jena
+  - role: fuseki
+  - role: virtuoso
+  - role: graphdb
+  - role: loaders
+  - role: iguana
+  - role: iguana_suites

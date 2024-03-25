@@ -1,0 +1,44 @@
+- name: Check for Jena
+  stat:
+    path: "{{ target_dir }}/systems/jena/apache-jena-{{ jena_version }}/"
+  register: jena_dir
+
+- block:
+  - name: Create Jena directory
+    file:
+      path: "{{ target_dir }}/systems/jena"
+      state: directory
+
+  - name: Create a temporary download directory
+    tempfile:
+      state: directory
+      suffix: jena
+    register: tempdir
+
+  - name: Download Jena Checksum
+    get_url:
+      url: https://archive.apache.org/dist/jena/binaries/apache-jena-{{ jena_version }}.tar.gz.sha512
+      dest: "{{ tempdir.path }}/apache-jena-{{ jena_version }}.tar.gz.sha512"
+
+  - name: Slurp Jena Checksum
+    slurp:
+      path: "{{ tempdir.path }}/apache-jena-{{ jena_version }}.tar.gz.sha512"
+    register: checksum
+
+  - name: Download Jena
+    get_url:
+      url: https://archive.apache.org/dist/jena/binaries/apache-jena-{{ jena_version }}.tar.gz
+      checksum: "sha512:{{ (checksum.content | b64decode).split(' ')[0] }}"
+      dest: "{{ tempdir.path }}/apache-jena-{{ jena_version }}.tar.gz"
+
+  - name: Unzip Jena
+    unarchive:
+      remote_src: yes
+      src: "{{ tempdir.path }}/apache-jena-{{ jena_version }}.tar.gz"
+      dest: "{{ target_dir }}/systems/jena/"
+
+  - name: Delete tempdir
+    file:
+      path: "{{ tempdir.path }}"
+      state: absent
+  when: not jena_dir.stat.exists

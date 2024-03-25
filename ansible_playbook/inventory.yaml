@@ -1,0 +1,6 @@
+all:
+  hosts:
+    remote:
+      ansible_host: <ip_of_host>
+    localhost:
+      ansible_connection: local

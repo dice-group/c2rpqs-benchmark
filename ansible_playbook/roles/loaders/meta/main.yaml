@@ -1,0 +1,8 @@
+dependencies:
+  - role: base
+  - role: tentris
+  - role: fuseki
+  - role: virtuoso
+  - role: graphdb
+  - role: milleniumdb
+  - role: blazegraph

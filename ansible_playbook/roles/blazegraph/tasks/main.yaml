@@ -1,0 +1,25 @@
+- name: Create Blazegraph directory
+  file:
+    path: "{{ target_dir }}/systems/blazegraph"
+    state: directory
+
+- name: Check for Blazegraph
+  stat:
+    path: "{{ target_dir }}/systems/blazegraph/blazegraph.jar"
+  register: blazegraph
+
+- name: Download Blazegraph JAR
+  get_url:
+    url: https://github.com/blazegraph/database/releases/download/{{ blazegraph_version }}/blazegraph.jar
+    dest: "{{ target_dir }}/systems/blazegraph/blazegraph.jar"
+  when: not blazegraph.stat.exists
+
+- name: Template copy application properties
+  template:
+    src: application.properties
+    dest: "{{ target_dir }}/systems/blazegraph/application.properties"
+
+- name: Template copy override_timeout_web.xml
+  template:
+    src: override_timeout_web.xml
+    dest: "{{ target_dir }}/systems/blazegraph/override_timeout_web.xml"

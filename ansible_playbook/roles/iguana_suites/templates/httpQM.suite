@@ -1,0 +1,53 @@
+datasets:
+  - name: "{{ item[1].name }}"
+
+connections:
+  - name: "{{ item[0].name }}"
+    endpoint: "{{ item[0].connection_url | replace('%d', item[1].name) }}"
+
+tasks:
+  - className: "Stresstest"
+    configuration:
+      noOfQueryMixes: 1 # warmup
+      queryHandler:
+        className: "InstancesQueryHandler"
+      workers:
+        - threads: {{ item[2].number }}
+          className: "HttpGetWorker"
+          language: "lang.SIMPLE"
+          responseType: "application/sparql-results+json"
+          queriesFile: "{{ item[1].queries_path }}/{{ queries_name }}.txt"
+          timeOut: {{ iguana_query_timeout }}
+  - className: "Stresstest"
+    configuration:
+      noOfQueryMixes: {{ iguana_query_mixes_limit }}
+      queryHandler:
+        className: "InstancesQueryHandler"
+      workers:
+        - threads: {{ item[2].number }}
+          className: "HttpGetWorker"
+          language: "lang.SIMPLE"
+          responseType: "application/sparql-results+json"
+          queriesFile: "{{ item[1].queries_path }}//{{ queries_name }}.txt"
+          timeOut: {{ iguana_query_timeout }}
+
+#optional otherwise the same metrics will be used as default
+metrics:
+  - className: "QMPH"
+  - className: "QPS"
+    configuration:
+      #in MS
+      penalty: {{ query_timeout_ms }}
+  - className: "NoQPH"
+  - className: "AvgQPS"
+    configuration:
+      #in MS
+      penalty: {{ query_timeout_ms }}
+  - className: "NoQ"
+  - className: "EachQuery"
+
+
+storages:
+  - className: "NTFileStorage"
+    configuration:
+      fileName: {{ target_dir }}/iguana_results/sparql/results_{{ item[0].name }}-{{ item[1].name }}-{{ item[2].number }}-{{ queries_name }}-QM.nt

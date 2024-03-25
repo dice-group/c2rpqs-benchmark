@@ -1,0 +1,55 @@
+- name: Install make & cmake
+  become: yes
+  apt:
+    package:
+      - make
+      - cmake
+
+- name: Install pkg-config
+  become: yes
+  apt:
+    package:
+      - pkg-config
+      - uuid-dev
+
+- name: Install C++ Compiler
+  become: yes
+  apt:
+    package:
+      - gcc
+      - g++
+
+- name: Install git
+  become: yes
+  apt:
+    package: git
+
+- name: Install boost
+  become: yes
+  apt:
+    package: libboost-all-dev
+
+- name: Install readline
+  become: yes
+  apt:
+    package: libreadline-dev
+
+- name: Install libcurl
+  become: yes
+  apt:
+    package: libcurl4-openssl-dev
+
+- name: Install OpenJDK 11
+  become: yes
+  apt:
+    package:
+      - openjdk-11-jdk
+      - maven
+    state: present
+
+- name: Install libncurses5 (for virtuoso 7.2.7)
+  become: yes
+  apt:
+    package:
+      - libncurses5
+

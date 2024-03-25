@@ -1,0 +1,5 @@
+- name: Install tentris versions
+  loop: "{{ tentris_versions }}"
+  loop_control:
+    loop_var: tentris_version
+  include_tasks: install.yaml

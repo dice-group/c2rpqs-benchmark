@@ -1,0 +1,36 @@
+- name: Check for milleniumdb
+  stat:
+    path: "{{ target_dir }}/systems/milleniumdb/server_sparql"
+  register: milleniumdb
+
+- block:
+
+  - name: Create installation directory
+    file:
+      path: "{{ target_dir }}/systems/milleniumdb"
+      state: directory
+
+  - name: Create a temporary download directory
+    tempfile:
+      state: directory
+      suffix: milleniumdb
+    register: tempdir
+
+  - name: Copy milleniumdb binaries
+    copy: 
+      src: "milleniumdb.zip"
+      dest: "{{ tempdir.path }}"
+
+  - name: Unzip milleniumdb binaries
+    unarchive:
+      remote_src: yes
+      src: "{{ tempdir.path }}/milleniumdb.zip"
+      dest: "{{ target_dir }}/systems/milleniumdb/"
+
+  - name: Delete tempdir
+    file:
+      path: "{{ tempdir.path }}"
+      state: absent
+  
+  when: not milleniumdb.stat.exists
+

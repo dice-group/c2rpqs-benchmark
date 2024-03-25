@@ -1,0 +1,36 @@
+- name: Check for tentris
+  stat:
+    path: "{{ target_dir }}/systems/tentris/{{ tentris_version }}/tentris_server"
+  register: tentris
+
+- block:
+
+  - name: Create installation directory
+    file:
+      path: "{{ target_dir }}/systems/tentris/{{ tentris_version }}"
+      state: directory
+
+  - name: Create a temporary download directory
+    tempfile:
+      state: directory
+      suffix: tentris
+    register: tempdir
+
+  - name: Copy tentris binaries
+    copy: 
+      src: "{{ tentris_version }}.zip"
+      dest: "{{ tempdir.path }}"
+
+  - name: Unzip tentris binaries
+    unarchive:
+      remote_src: yes
+      src: "{{ tempdir.path }}/{{ tentris_version }}.zip"
+      dest: "{{ target_dir }}/systems/tentris/{{ tentris_version }}/"
+
+  - name: Delete tempdir
+    file:
+      path: "{{ tempdir.path }}"
+      state: absent
+  
+  when: not tentris.stat.exists
+

@@ -1,0 +1,5 @@
+target_dir: <target_dir>
+user: <user>
+system_memory: 246093750 # in kilobytes (252gb)
+query_timeout_s: 180
+query_timeout_ms: 180000
